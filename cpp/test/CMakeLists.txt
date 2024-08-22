@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.10)
 
 include(GoogleTest)
 
-set(gtest_disable_pthreads OFF)
-
 file(GLOB_RECURSE UTILITY_TEST_SOURCES "${PROJECT_SOURCE_DIR}/test/*/*test.cpp")
 
 # #####################################################################################################################
