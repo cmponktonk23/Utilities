@@ -1,7 +1,8 @@
-#include "tree/quad_tree.h"
 #include <gtest/gtest.h>
-#include "common/types/rect.h"
+
+#include "common/geometries/rect.h"
 #include "tree/inside_handler.h"
+#include "tree/quad_tree.h"
 
 namespace utilities {
 TEST(QuadTreeTests, TestSingleNode) {

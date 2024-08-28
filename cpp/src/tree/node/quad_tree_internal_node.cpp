@@ -5,19 +5,15 @@
 #include "tree/node/quad_tree_leaf_node.h"
 
 namespace utilities {
-template <typename Geometry2DType, typename InsideHandler>
-QuadTreeInternalNode<Geometry2DType, InsideHandler>::QuadTreeInternalNode(Rect rect,
-                                                                          const InsideHandler &inside_handler,
-                                                                          size_t depth)
-    : QuadTreeNode<Geometry2DType, InsideHandler>(rect, inside_handler, depth) {
+
+QuadTreeInternalNode::QuadTreeInternalNode(Rect rect, size_t depth) : QuadTreeNode(rect, depth) {
   this->SetNodeType(QuadTreeNodeType::INTERNAL_NODE);
   for (auto &child : children_) {
     child = nullptr;
   }
 }
 
-template <typename Geometry2DType, typename InsideHandler>
-void QuadTreeInternalNode<Geometry2DType, InsideHandler>::Print() {
+void QuadTreeInternalNode::Print() {
   std::stringstream ss;
   ss << "Children[";
   for (int i = 0; i < 4; ++i) {
@@ -36,7 +32,5 @@ void QuadTreeInternalNode<Geometry2DType, InsideHandler>::Print() {
   std::cout << "InternalNode[" << this->rect_ << ", " << ss.str() << "]"
             << " ";
 }
-
-template class QuadTreeInternalNode<Rect, RectInsideRectHandler>;
 
 }  // namespace utilities

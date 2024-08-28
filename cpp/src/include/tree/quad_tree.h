@@ -1,47 +1,51 @@
 #pragma once
 
+#include <functional>
 #include <memory>
 #include <optional>
+#include <unordered_set>
 #include <vector>
 
-#include "common/types/rect.h"
+#include "common/geometries/rect.h"
 #include "tree/node/quad_tree_node.h"
 
 namespace utilities {
 
-template <typename Geometry2DType, typename InsideHandler>
 class QuadTree {
  public:
   QuadTree() = delete;
   QuadTree(const QuadTree &other) = delete;
 
-  explicit QuadTree(size_t max_children, size_t max_depth, const Rect &rect, const InsideHandler &inside_handler);
+  explicit QuadTree(size_t max_children, size_t max_depth, const Rect &rect);
 
   auto IsEmpty() const -> bool;
 
-  void Build(const std::vector<Geometry2DType> &objects);
+  void Build(const std::vector<Shape2D> &objects);
 
-  auto Insert(const Geometry2DType &obj) -> bool;
+  auto Insert(const Shape2D &obj) -> bool;
+
+  void Query(const Shape2D &obj, std::unordered_set<size_t> &candidates) const;
 
   void PrintTree();
 
+  void Traverse(std::function<void(const Rect &)>);
+
  private:
-  auto Build(size_t depth, Rect rect, const std::vector<Geometry2DType> &objects)
-      -> std::unique_ptr<QuadTreeNode<Geometry2DType, InsideHandler>>;
+  auto Build(size_t depth, Rect rect, const std::vector<Shape2D> &objects) -> std::unique_ptr<QuadTreeNode>;
 
-  void Insert(size_t depth, std::unique_ptr<QuadTreeNode<Geometry2DType, InsideHandler>> &node,
-              const Geometry2DType &obj);
+  void Insert(size_t depth, std::unique_ptr<QuadTreeNode> &node, const Shape2D &obj);
 
-  void SplitRect(const Rect &rect, Rect rects[4]);
+  void Query(size_t depth, const std::unique_ptr<QuadTreeNode> &node, const Shape2D &obj,
+             std::unordered_set<size_t> &candidates) const;
 
-  void SplitObjectsByRects(const std::vector<Geometry2DType> &objects, std::vector<Geometry2DType> split_objects[4],
-                           Rect rects[4]);
+  void SplitRect(const Rect &rect, Rect rects[4]) const;
+
+  void SplitObjectsByRects(const std::vector<Shape2D> &objects, std::vector<Shape2D> split_objects[4], Rect rects[4]);
 
   const size_t max_children_;
   const size_t max_depth_;
-  std::unique_ptr<QuadTreeNode<Geometry2DType, InsideHandler>> root_{nullptr};
+  std::unique_ptr<QuadTreeNode> root_{nullptr};
   Rect rect_;
-  InsideHandler inside_handler_;
 };
 
 }  // namespace utilities

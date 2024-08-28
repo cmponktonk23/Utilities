@@ -155,6 +155,7 @@ endfunction()
 add_subdirectory(src)
 add_subdirectory(test)
 add_subdirectory(third_party)
+add_subdirectory(visualization)
 # add_subdirectory(tools)
 
 # #####################################################################################################################

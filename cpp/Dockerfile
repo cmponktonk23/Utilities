@@ -15,6 +15,7 @@ RUN apt-get -y update && \
     vim \
     pkg-config \
     zlib1g-dev \
+    libsfml-dev \
     sudo \
     # git \
     # doxygen \

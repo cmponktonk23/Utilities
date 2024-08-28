@@ -1,8 +1,11 @@
-#include "common/types/rect.h"
+#include "common/geometries/rect.h"
+#include "common/exception.h"
+#include "tree/intersect_handler.h"
 
 namespace utilities {
 
-Rect::Rect(Vector2D left_down, Vector2D right_up) : left_down_(left_down), right_up_(right_up) {}
+Rect::Rect(Vector2D left_down, Vector2D right_up)
+    : Shape2D(Shape2DType::RECT), left_down_(left_down), right_up_(right_up) {}
 
 auto Rect::operator=(const Rect &other) -> Rect & {
   if (this == &other) {
@@ -13,6 +16,16 @@ auto Rect::operator=(const Rect &other) -> Rect & {
   right_up_ = other.right_up_;
 
   return *this;
+}
+
+auto Rect::Interact(const Shape2D &other) const -> bool {
+  if (other.GetShapeType() == Shape2DType::RECT) {
+    return RectRectInteractHandler()(dynamic_cast<const Rect &>(*this), dynamic_cast<const Rect &>(other));
+  } else if (other.GetShapeType() == Shape2DType::POINT) {
+    return PointRectInteractHandler()(dynamic_cast<const Point &>(other), dynamic_cast<const Rect &>(*this));
+  } else {
+    throw NotImplementedException("interact with other shapes is not supported");
+  }
 }
 
 auto Rect::GetLeftDown() const -> Vector2D { return left_down_; }

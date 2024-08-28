@@ -1,8 +1,8 @@
-#include "tree/inside_handler.h"
+#include "tree/intersect_handler.h"
 
 namespace utilities {
 
-auto RectInsideRectHandler::operator()(const Rect &rect1, const Rect &rect2) const -> bool {
+auto RectRectInteractHandler::operator()(const Rect &rect1, const Rect &rect2) const -> bool {
   auto x_min_1 = rect1.GetLeftDown().GetX();
   auto x_max_1 = rect1.GetRightUp().GetX();
   auto y_min_1 = rect1.GetLeftDown().GetY();
@@ -18,5 +18,9 @@ auto RectInsideRectHandler::operator()(const Rect &rect1, const Rect &rect2) con
 
   return x_overlap && y_overlap;
 }
+
+auto PointRectInteractHandler::operator()(const Point &point, const Rect &rect) const -> bool { return true; }
+
+auto PointPointInteractHandler::operator()(const Point &point1, const Point &point2) const -> bool { return true; }
 
 }  // namespace utilities

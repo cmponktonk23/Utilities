@@ -2,10 +2,12 @@
 
 #include <iostream>
 
-#include "common/types/vector2d.h"
+#include "common/geometries/shape2d.h"
+#include "common/geometries/vector2d.h"
 
 namespace utilities {
-class Rect {
+
+class Rect : public Shape2D {
  public:
   Rect() = default;
   ~Rect() = default;
@@ -18,6 +20,8 @@ class Rect {
   auto GetRightUp() const -> Vector2D;
   auto GetWidth() const -> double;
   auto GetHeight() const -> double;
+
+  auto Interact(const Shape2D &other) const -> bool override;
 
   friend auto operator<<(std::ostream &os, const Rect &rect) -> std::ostream &;
 

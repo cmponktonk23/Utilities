@@ -7,9 +7,8 @@
 
 namespace utilities {
 
-template <typename Geometry2DType, typename InsideHandler>
-class QuadTreeInternalNode : public QuadTreeNode<Geometry2DType, InsideHandler> {
-  friend class QuadTree<Geometry2DType, InsideHandler>;
+class QuadTreeInternalNode : public QuadTreeNode {
+  friend class QuadTree;
 
  public:
   QuadTreeInternalNode() = delete;
@@ -17,12 +16,12 @@ class QuadTreeInternalNode : public QuadTreeNode<Geometry2DType, InsideHandler> 
 
   ~QuadTreeInternalNode() override = default;
 
-  explicit QuadTreeInternalNode(Rect rect, const InsideHandler &inside_handler, size_t depth);
+  explicit QuadTreeInternalNode(Rect rect, size_t depth);
 
   void Print() override;
 
  private:
-  std::unique_ptr<QuadTreeNode<Geometry2DType, InsideHandler>> children_[4];
+  std::unique_ptr<QuadTreeNode> children_[4];
 };
 
 }  // namespace utilities
