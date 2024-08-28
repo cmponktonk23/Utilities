@@ -6,6 +6,9 @@
 namespace utilities {
 
 Point::Point(Vector2D pos) : Shape2D(Shape2DType::POINT), pos_(pos) {}
+
+Point::Point() : Point(Vector2D(0, 0)) {}
+
 Point::Point(double x, double y) : Point(Vector2D(x, y)) {}
 
 auto Point::operator=(const Point &other) -> Point & {
@@ -29,8 +32,6 @@ auto Point::Interact(const Shape2D &other) const -> bool {
     throw NotImplementedException("interact with other shapes is not supported");
   }
 }
-
-auto Point::GetPos() const -> Vector2D { return pos_; }
 
 auto operator<<(std::ostream &os, const Point &point) -> std::ostream & {
   os << "Rect[(" << point.pos_.GetX() << ", " << point.pos_.GetY() << ")]";

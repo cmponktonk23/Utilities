@@ -9,7 +9,7 @@ namespace utilities {
 
 class Point : public Shape2D {
  public:
-  Point() = default;
+  explicit Point();
   ~Point() = default;
 
   explicit Point(Vector2D pos);

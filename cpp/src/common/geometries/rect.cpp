@@ -7,6 +7,8 @@ namespace utilities {
 Rect::Rect(Vector2D left_down, Vector2D right_up)
     : Shape2D(Shape2DType::RECT), left_down_(left_down), right_up_(right_up) {}
 
+Rect::Rect() : Rect(Vector2D(0, 0), Vector2D(0, 0)) {}
+
 auto Rect::operator=(const Rect &other) -> Rect & {
   if (this == &other) {
     return *this;

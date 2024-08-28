@@ -9,7 +9,7 @@ namespace utilities {
 
 class Rect : public Shape2D {
  public:
-  Rect() = default;
+  explicit Rect();
   ~Rect() = default;
 
   explicit Rect(Vector2D left_down, Vector2D right_up);

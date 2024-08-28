@@ -4,7 +4,7 @@ add_library(
     utilities_tree
     OBJECT
     quad_tree.cpp
-    inside_handler.cpp)
+    intersect_handler.cpp)
 
 set(ALL_OBJECT_FILES
     ${ALL_OBJECT_FILES} $<TARGET_OBJECTS:utilities_tree>

@@ -19,7 +19,19 @@ auto RectRectInteractHandler::operator()(const Rect &rect1, const Rect &rect2) c
   return x_overlap && y_overlap;
 }
 
-auto PointRectInteractHandler::operator()(const Point &point, const Rect &rect) const -> bool { return true; }
+auto PointRectInteractHandler::operator()(const Point &point, const Rect &rect) const -> bool {
+  auto px = point.GetPos().GetX();
+  auto py = point.GetPos().GetY();
+
+  auto rx1 = rect.GetLeftDown().GetX();
+  auto rx2 = rect.GetRightUp().GetX();
+  auto ry1 = rect.GetLeftDown().GetY();
+  auto ry2 = rect.GetRightUp().GetY();
+
+//   std::cout << (rx1 <= px && px <= rx2 && ry1 <= py && py <= ry2) << std::endl;
+
+  return rx1 <= px && px <= rx2 && ry1 <= py && py <= ry2;
+}
 
 auto PointPointInteractHandler::operator()(const Point &point1, const Point &point2) const -> bool { return true; }
 

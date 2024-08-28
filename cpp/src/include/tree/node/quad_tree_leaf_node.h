@@ -22,7 +22,7 @@ class QuadTreeLeafNode : public QuadTreeNode {
   void Print() override;
 
  private:
-  std::vector<Shape2D> objects_;
+  std::vector<std::shared_ptr<Shape2D>> objects_;
 };
 
 }  // namespace utilities

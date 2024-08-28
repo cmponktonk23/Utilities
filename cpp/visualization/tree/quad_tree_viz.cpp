@@ -3,8 +3,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "common/types/rect.h"
-#include "tree/inside_handler.h"
+#include "common/geometries/rect.h"
+#include "tree/intersect_handler.h"
 #include "tree/quad_tree.h"
 
 using namespace utilities;
@@ -14,7 +14,7 @@ using namespace utilities;
 #define QUERY_SIZE 40
 
 size_t global_id = 0;
-std::unordered_map<size_t, Rect> objects;
+std::unordered_map<size_t, std::shared_ptr<Shape2D>> objects;
 std::unordered_set<size_t> candidates;
 
 int getRandomInt(int min, int max) {
@@ -27,15 +27,19 @@ int getRandomInt(int min, int max) {
 
 sf::RenderWindow window(sf::VideoMode(CANVAS_WIDTH, CANVAS_HEIGHT), "QuadTree Visualization");
 
-void drawObj(const Rect &obj, const sf::Color &color) {
-  double width = obj.GetWidth();
-  double height = obj.GetHeight();
+void drawObj(const std::shared_ptr<Shape2D> &obj, const sf::Color &color) {
+  if (obj->GetShapeType() == Shape2DType::RECT) {
+    auto *rect = dynamic_cast<Rect *>(obj.get());
 
-  sf::RectangleShape rectangle(sf::Vector2f(width, height));
-  rectangle.setPosition(obj.GetLeftDown().GetX(), obj.GetLeftDown().GetY());
-  rectangle.setFillColor(color);
+    double width = rect->GetWidth();
+    double height = rect->GetHeight();
 
-  window.draw(rectangle);
+    sf::RectangleShape rectangle(sf::Vector2f(width, height));
+    rectangle.setPosition(rect->GetLeftDown().GetX(), rect->GetLeftDown().GetY());
+    rectangle.setFillColor(color);
+
+    window.draw(rectangle);
+  }
 }
 
 void drawObjects() {
@@ -65,34 +69,48 @@ void drawRect(const Rect &rect) {
   drawLine(left_up, left_down);
 }
 
-void refreshTree(QuadTree<Rect, RectInsideRectHandler> &tree) {
-  std::vector<Rect> objs;
+void refreshTree(QuadTree &tree) {
+  std::vector<std::shared_ptr<Shape2D>> objs;
   for (auto &[_, obj] : objects) {
     objs.push_back(obj);
   }
   tree.Build(objs);
 }
 
-void drawTree(QuadTree<Rect, RectInsideRectHandler> &tree) { tree.Traverse(drawRect); }
+void drawTree(QuadTree &tree) { tree.Traverse(drawRect); }
 
-void addObject(QuadTree<Rect, RectInsideRectHandler> &tree, sf::Vector2i pos) {
+void addObject(QuadTree &tree, sf::Vector2i pos) {
   auto left_down = Vector2D(pos.x, pos.y);
   int width = getRandomInt(2, 40);
   int height = getRandomInt(2, 40);
   auto right_up = left_down + Vector2D(width, height);
 
-  auto obj = Rect(left_down, right_up);
-  obj.id_ = global_id++;
-  objects[obj.id_] = obj;
+  auto obj = std::make_shared<Rect>(left_down, right_up);
+  obj->id_ = global_id++;
+  objects[obj->id_] = obj;
 
   tree.Insert(obj);
 }
 
-void removeObject(QuadTree<Rect, RectInsideRectHandler> &tree, sf::Vector2i pos) { 
-    auto point = 
-    tree.Remove(); }
+void removeObject(QuadTree &tree, sf::Vector2i pos) {
+  auto query_point = std::make_shared<Point>(Vector2D(pos.x, pos.y));
+  candidates.clear();
+  tree.Query(query_point, candidates);
 
-void detectMouseEvent(sf::Event &event, QuadTree<Rect, RectInsideRectHandler> &tree) {
+  for (auto id : candidates) {
+    if (objects.find(id) != objects.end()) {
+      std::cout << "Check Object " << id << std::endl;
+      auto &obj = objects[id];
+      if (obj->Interact(*query_point)) {
+        std::cout << "Remove Object " << id << std::endl;
+        tree.Remove(objects[id]);
+        objects.erase(id);
+      }
+    }
+  }
+}
+
+void detectMouseEvent(sf::Event &event, QuadTree &tree) {
   static bool isMouseLeftPressed = false;
   static bool isMouseRightPressed = false;
 
@@ -112,6 +130,7 @@ void detectMouseEvent(sf::Event &event, QuadTree<Rect, RectInsideRectHandler> &t
     if (!isMouseRightPressed) {
       isMouseRightPressed = true;
       sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+      std::cout << "Try Remove Object" << std::endl;
       removeObject(tree, mousePosition);
     }
   }
@@ -121,24 +140,28 @@ void detectMouseEvent(sf::Event &event, QuadTree<Rect, RectInsideRectHandler> &t
   }
 }
 
-void drawQuery(const QuadTree<Rect, RectInsideRectHandler> &tree) {
+void drawQuery(const QuadTree &tree) {
   sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
-  auto left_down = mousePosition - sf::Vector2i(QUERY_SIZE, QUERY_SIZE) / 2;
-  auto right_up = mousePosition + sf::Vector2i(QUERY_SIZE, QUERY_SIZE) / 2;
 
-  auto query_rect = Rect(Vector2D(left_down.x, left_down.y), Vector2D(right_up.x, right_up.y));
-  drawObj(query_rect, sf::Color::Blue);
+  auto query_point = std::make_shared<Point>(Vector2D(mousePosition.x, mousePosition.y));
+
+  //   auto left_down = mousePosition - sf::Vector2i(QUERY_SIZE, QUERY_SIZE) / 2;
+  //   auto right_up = mousePosition + sf::Vector2i(QUERY_SIZE, QUERY_SIZE) / 2;
+
+  //   auto query_rect = std::make_shared<Rect>(Vector2D(left_down.x, left_down.y), Vector2D(right_up.x, right_up.y));
+  //   drawObj(query_rect, sf::Color::Blue);
+
+  //   candidates.clear();
+  //   tree.Query(query_rect, candidates);
 
   candidates.clear();
-  tree.Query(query_rect, candidates);
+  tree.Query(query_point, candidates);
 }
 
 int main() {
   window.setFramerateLimit(60);
 
-  auto handler = RectInsideRectHandler();
-  QuadTree<Rect, RectInsideRectHandler> tree(2, 5, Rect(Vector2D(0, 0), Vector2D(CANVAS_WIDTH, CANVAS_HEIGHT)),
-                                             handler);
+  QuadTree tree(2, 7, Rect(Vector2D(0, 0), Vector2D(CANVAS_WIDTH, CANVAS_HEIGHT)));
 
   while (window.isOpen()) {
     sf::Event event;

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "tree/inside_handler.h"
+#include "tree/intersect_handler.h"
 #include "tree/node/quad_tree_internal_node.h"
 #include "tree/node/quad_tree_leaf_node.h"
 

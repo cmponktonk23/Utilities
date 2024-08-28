@@ -1,6 +1,7 @@
 add_library(
   utilities_common
   OBJECT
+  geometries/point.cpp
   geometries/rect.cpp
   geometries/vector2d.cpp)
 
