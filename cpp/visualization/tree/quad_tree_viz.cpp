@@ -161,7 +161,7 @@ void drawQuery(const QuadTree &tree) {
 int main() {
   window.setFramerateLimit(60);
 
-  QuadTree tree(2, 7, Rect(Vector2D(0, 0), Vector2D(CANVAS_WIDTH, CANVAS_HEIGHT)));
+  QuadTree tree(1, 5, Rect(Vector2D(0, 0), Vector2D(CANVAS_WIDTH, CANVAS_HEIGHT)));
 
   while (window.isOpen()) {
     sf::Event event;

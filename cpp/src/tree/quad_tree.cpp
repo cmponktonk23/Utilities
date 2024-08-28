@@ -45,7 +45,6 @@ auto QuadTree::Build(size_t depth, Rect rect, const std::vector<std::shared_ptr<
     return nullptr;
   }
 
-  //   std::cout << rect << " " << objects.size() << std::endl;
   if (objects.size() <= max_children_ || depth == max_depth_) {
     auto leaf_node = std::make_unique<QuadTreeLeafNode>(rect, depth);
     leaf_node->objects_ = objects;
@@ -205,6 +204,9 @@ auto QuadTree::Remove(size_t depth, std::unique_ptr<QuadTreeNode> &node, const s
         for (auto &obj : leaf_node->objects_) {
           if (objs.find(obj->id_) == objs.end()) {
             objs[obj->id_] = obj;
+            if (objs.size() > max_children_) {
+              return false;
+            }
           }
         }
       }
@@ -215,6 +217,7 @@ auto QuadTree::Remove(size_t depth, std::unique_ptr<QuadTreeNode> &node, const s
         leaf_node->objects_.push_back(obj);
       }
       node = std::move(leaf_node);
+      return true;
     }
   }
 
