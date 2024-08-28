@@ -1,0 +1,15 @@
+# version: '3'
+services:
+  utilities:
+    # image: utilities
+    build: .
+    # ports:
+    #   - "8080:8080"
+    user: foo
+    volumes:
+      - .:/home/foo/utilities/cpp
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    # environment:
+    #   - CC=clang-14
+    #   - CXX=clang++-14

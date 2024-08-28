@@ -15,20 +15,33 @@ class QuadTree {
   QuadTree() = delete;
   QuadTree(const QuadTree &other) = delete;
 
-  explicit QuadTree(const InsideHandler &inside_handler);
+  explicit QuadTree(size_t max_children, size_t max_depth, const Rect &rect, const InsideHandler &inside_handler);
 
   auto IsEmpty() const -> bool;
 
-  void Build(Rect rect, const std::vector<Geometry2DType> &objects);
+  void Build(const std::vector<Geometry2DType> &objects);
+
+  auto Insert(const Geometry2DType &obj) -> bool;
+
+  void PrintTree();
 
  private:
-  auto Build(int depth, Rect rect, const std::vector<Geometry2DType> &objects)
-      -> std::optional<std::unique_ptr<QuadTreeNode<Geometry2DType, InsideHandler>>>;
+  auto Build(size_t depth, Rect rect, const std::vector<Geometry2DType> &objects)
+      -> std::unique_ptr<QuadTreeNode<Geometry2DType, InsideHandler>>;
 
-  std::optional<std::unique_ptr<QuadTreeNode<Geometry2DType, InsideHandler>>> root_{std::nullopt};
+  void Insert(size_t depth, std::unique_ptr<QuadTreeNode<Geometry2DType, InsideHandler>> &node,
+              const Geometry2DType &obj);
+
+  void SplitRect(const Rect &rect, Rect rects[4]);
+
+  void SplitObjectsByRects(const std::vector<Geometry2DType> &objects, std::vector<Geometry2DType> split_objects[4],
+                           Rect rects[4]);
+
+  const size_t max_children_;
+  const size_t max_depth_;
+  std::unique_ptr<QuadTreeNode<Geometry2DType, InsideHandler>> root_{nullptr};
   Rect rect_;
   InsideHandler inside_handler_;
-  std::vector<Geometry2DType> split_objects_[MAX_CHILDREN];
 };
 
 }  // namespace utilities
