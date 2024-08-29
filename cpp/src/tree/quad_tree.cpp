@@ -39,7 +39,7 @@ void QuadTree::SplitObjectsByRects(const std::vector<std::shared_ptr<Shape2D>> &
   }
 }
 
-auto QuadTree::Build(size_t depth, Rect rect, const std::vector<std::shared_ptr<Shape2D>> &objects)
+auto QuadTree::Build(size_t depth, const Rect &rect, const std::vector<std::shared_ptr<Shape2D>> &objects)
     -> std::unique_ptr<QuadTreeNode> {
   if (objects.empty()) {
     return nullptr;
@@ -144,12 +144,12 @@ void QuadTree::Query(size_t depth, const std::unique_ptr<QuadTreeNode> &node, co
   }
 }
 
-auto QuadTree::Remove(const std::shared_ptr<Shape2D> &obj) -> bool {
+auto QuadTree::Remove(const std::shared_ptr<Shape2D> &target) -> bool {
   if (!root_) {
     return false;
   }
 
-  return Remove(1, root_, obj);
+  return Remove(1, root_, target);
 }
 
 auto QuadTree::Remove(size_t depth, std::unique_ptr<QuadTreeNode> &node, const std::shared_ptr<Shape2D> &target)
@@ -160,7 +160,8 @@ auto QuadTree::Remove(size_t depth, std::unique_ptr<QuadTreeNode> &node, const s
 
   if (node->IsLeafNode()) {
     auto *leaf_node = dynamic_cast<QuadTreeLeafNode *>(node.get());
-    int i, n = leaf_node->objects_.size();
+    int i;
+    int n = leaf_node->objects_.size();
     for (i = 0; i < n; ++i) {
       if (target->id_ == leaf_node->objects_[i]->id_) {
         swap(leaf_node->objects_[i], leaf_node->objects_[n - 1]);
@@ -224,7 +225,7 @@ auto QuadTree::Remove(size_t depth, std::unique_ptr<QuadTreeNode> &node, const s
   return false;
 }
 
-void QuadTree::Traverse(std::function<void(const Rect &)> callback) {
+void QuadTree::Traverse(const std::function<void(const Rect &)> &callback) {
   if (IsEmpty()) {
     return;
   }

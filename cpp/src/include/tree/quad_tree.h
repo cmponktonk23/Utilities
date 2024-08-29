@@ -30,15 +30,15 @@ class QuadTree {
 
   void PrintTree();
 
-  void Traverse(std::function<void(const Rect &)>);
+  void Traverse(const std::function<void(const Rect &)> &);
 
  private:
-  auto Build(size_t depth, Rect rect, const std::vector<std::shared_ptr<Shape2D>> &objects)
+  auto Build(size_t depth, const Rect &rect, const std::vector<std::shared_ptr<Shape2D>> &objects)
       -> std::unique_ptr<QuadTreeNode>;
 
-  void Insert(size_t depth, std::unique_ptr<QuadTreeNode> &node, const std::shared_ptr<Shape2D> &obj);
+  void Insert(size_t depth, std::unique_ptr<QuadTreeNode> &node, const std::shared_ptr<Shape2D> &target);
 
-  void Query(size_t depth, const std::unique_ptr<QuadTreeNode> &node, const std::shared_ptr<Shape2D> &obj,
+  void Query(size_t depth, const std::unique_ptr<QuadTreeNode> &node, const std::shared_ptr<Shape2D> &target,
              std::unordered_set<size_t> &candidates) const;
 
   auto Remove(size_t depth, std::unique_ptr<QuadTreeNode> &node, const std::shared_ptr<Shape2D> &target) -> bool;

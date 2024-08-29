@@ -3,7 +3,8 @@ add_library(
     OBJECT
     quad_tree_node.cpp
     quad_tree_internal_node.cpp
-    quad_tree_leaf_node.cpp)
+    quad_tree_leaf_node.cpp
+    kd_tree_node.cpp)
 
 set(ALL_OBJECT_FILES
     ${ALL_OBJECT_FILES} $<TARGET_OBJECTS:utilities_tree_node>
