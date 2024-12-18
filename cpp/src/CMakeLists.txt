@@ -1,10 +1,14 @@
+add_subdirectory(cache)
 add_subdirectory(tree)
+add_subdirectory(queue)
 add_subdirectory(common)
 
 add_library(utilities STATIC ${ALL_OBJECT_FILES})
 
 set(UTILITY_LIBS
         utilities_common
+        utilities_queue
+        utilities_cache
         utilities_tree
         utilities_tree_node
         )
