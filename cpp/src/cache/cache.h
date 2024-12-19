@@ -7,7 +7,7 @@
 #include <unordered_map>
 
 #include "cache_exception.h"
-#include "replacement_policy_factory.h"
+#include "replacement_policies/replacement_policy_factory.h"
 
 namespace utilities {
 
