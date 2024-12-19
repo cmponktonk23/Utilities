@@ -1,6 +1,6 @@
 #include "replacement_policy_factory.h"
 
-#include <exception>
+#include <stdexcept>
 
 namespace utilities {
 
@@ -10,11 +10,12 @@ auto ReplacementPolicyFactory<KeyType>::Create(const ReplacementPolicyEnum &poli
   switch (policy) {
     case ReplacementPolicyEnum::LRU:
       return std::make_unique<LRUReplacementPolicy<KeyType>>();
-    // case ReplacementPolicyEnum::LFU:
-    //   //   throw std::runtime_error("Not implement");
-    //   return nullptr;
+    case ReplacementPolicyEnum::LFU:
+      return std::make_unique<LFUReplacementPolicy<KeyType>>();
+    case ReplacementPolicyEnum::LRU_K:
+      return std::make_unique<LRUKReplacementPolicy<KeyType>>();
     default:
-      return nullptr;
+      throw std::invalid_argument("Unsupported replacement policy.");
   }
   return nullptr;
 }

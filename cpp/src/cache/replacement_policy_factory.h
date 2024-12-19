@@ -13,6 +13,10 @@ class IReplacementPolicyFactory {
   IReplacementPolicyFactory() = default;
   virtual ~IReplacementPolicyFactory() = default;
 
+  // 1. Why we can't use template parameters on virtual function?
+  // Because polymorphism is based on vtable, which is a runtime mechanism. However, template is a compile-time mechanism.
+  // So, that's why we can only define the class as a template class.
+  // 2. Use unique_ptr to manage the lifecycle of the factory product.
   virtual auto Create(const ReplacementPolicyEnum &policy) -> std::unique_ptr<IReplacementPolicy<KeyType>> = 0;
 };
 
